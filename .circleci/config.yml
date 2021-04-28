@@ -2,9 +2,7 @@ version: 2.1
 
 commands:
   destroy-environment:
-    description: Destroy back-end and front-end cloudformation stacks given a workflow ID.
-    parameters:
-      # Add parameter here   
+    description: Destroy back-end and front-end cloudformation stacks given a workflow ID.  
     steps:
       - run:
           name: Destroy environments
@@ -15,8 +13,6 @@ commands:
 
   revert-migrations:
     description: Revert the last migration if successfully run in the current workflow.
-    parameters:
-      # Add parameter here     
     steps:
       - run:
           name: Revert migrations
@@ -44,7 +40,7 @@ jobs:
           name: Build front-end
           command: |
             # Your code here
-            npm i && npm build
+            exit 1
       - save_cache:
           paths: [frontend/node_modules]
           key: frontend-build
@@ -67,40 +63,47 @@ jobs:
 
   test-frontend:
     docker:
-      - image: cimg/node:16.0.0
+      - image: circleci/node:13.8.0
       # Docker image here
     steps:
+      - run: echo "test front-end"
       # Checkout code from git
       # Restore from cache
       # Your job code here
                 
   test-backend:
     docker:
-      - image: cimg/node:16.0.0
+      - image: circleci/node:13.8.0
       # Docker image here
     steps:
+      - run: echo "test back-end"
       # Checkout code from git
       # Restore from cache
       # Your job code here
             
-  # scan-frontend:
-  #   docker:
-  #     # Docker image here
-  #   steps:
-  #     # Checkout code from git
-  #     # Restore from cache
-  #     # Your job code here
+  scan-frontend:
+    docker:
+      - image: circleci/node:13.8.0
+      # Docker image here
+    steps:
+      - run: echo "scan front-end"
+      # Checkout code from git
+      # Restore from cache
+      # Your job code here
 
-  # scan-backend:
-  #   docker:
-  #     # Docker image here
-  #   steps:
-  #     # Checkout code from git
-  #     # Restore from cache
-  #     # Your job code here
+  scan-backend:
+    docker:
+      - image: circleci/node:13.8.0
+      # Docker image here
+    steps:
+      - run: echo "scan back-end"
+      # Checkout code from git
+      # Restore from cache
+      # Your job code here
 
   deploy-infrastructure:
     docker:
+      - image: circleci/aws-cli@0.1.18
       # Docker image here that supports AWS CLI
     steps:
       # Checkout code from git
@@ -135,6 +138,7 @@ jobs:
 
   configure-infrastructure:
     docker:
+      - image: circleci/aws-cli@0.1.18
       # Docker image here that supports Ansible
     steps:
       # Checkout code from git
@@ -154,6 +158,7 @@ jobs:
 
   run-migrations:
     docker:
+      - image: circleci/aws-cli@0.1.18
       # Docker image here that supports NodeJS
     steps:
       # Checkout code from git
@@ -171,6 +176,7 @@ jobs:
 
   deploy-frontend:
     docker:
+      - image: amazon/aws-cli:latest
       # Docker image here that supports AWS CLI
     steps:
       # Checkout code from git
@@ -192,6 +198,7 @@ jobs:
                     
   deploy-backend:
     docker:
+      - image: ansible/ansible:latest
       # Docker image here that supports Ansible
     steps:
       # Checkout code from git
@@ -209,6 +216,7 @@ jobs:
 
   smoke-test:
     docker:
+      - image: python:3.7-alpine3.11
       # Lightweight Docker image 
     steps:
       # Checkout code from git
@@ -232,6 +240,7 @@ jobs:
 
   cloudfront-update:
     docker:
+      - image: amazon/aws-cli:latest   
       # Docker image here that supports AWS CLI
     steps:
       # Checkout code from git
@@ -245,24 +254,25 @@ jobs:
             # your code here
       # Here's where you will add some code to rollback on failure  
 
-cleanup:
-    docker:
-      # Docker image here
-    steps:
-      # Checkout code from git
-      - run:
-          name: Get old stack workflow id
-          command: |
-            # your code here
-            export OldWorkflowID="the id here"
-            export STACKS=[] #put the list of stacks here
-      - run:
-          name: Remove old stacks and files
-          command: |
-            if [[ "${STACKS[@]}" =~ "${OldWorkflowID}" ]]
-            then
+  cleanup:
+      docker:
+        - image: python:3.7-alpine3.11
+        # Docker image here
+      steps:
+        # Checkout code from git
+        - run:
+            name: Get old stack workflow id
+            command: |
               # your code here
-            fi
+              export OldWorkflowID="the id here"
+              export STACKS=[] #put the list of stacks here
+        - run:
+            name: Remove old stacks and files
+            command: |
+              if [[ "${STACKS[@]}" =~ "${OldWorkflowID}" ]]
+              then
+                # your code here
+              fi
             
 
 workflows:
