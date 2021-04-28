@@ -44,7 +44,7 @@ jobs:
           name: Build front-end
           command: |
             # Your code here
-            exit 1
+            npm i && npm build
       - save_cache:
           paths: [frontend/node_modules]
           key: frontend-build
@@ -67,6 +67,7 @@ jobs:
 
   test-frontend:
     docker:
+      - image: cimg/node:16.0.0
       # Docker image here
     steps:
       # Checkout code from git
@@ -75,27 +76,28 @@ jobs:
                 
   test-backend:
     docker:
+      - image: cimg/node:16.0.0
       # Docker image here
     steps:
       # Checkout code from git
       # Restore from cache
       # Your job code here
             
-  scan-frontend:
-    docker:
-      # Docker image here
-    steps:
-      # Checkout code from git
-      # Restore from cache
-      # Your job code here
+  # scan-frontend:
+  #   docker:
+  #     # Docker image here
+  #   steps:
+  #     # Checkout code from git
+  #     # Restore from cache
+  #     # Your job code here
 
-  scan-backend:
-    docker:
-      # Docker image here
-    steps:
-      # Checkout code from git
-      # Restore from cache
-      # Your job code here
+  # scan-backend:
+  #   docker:
+  #     # Docker image here
+  #   steps:
+  #     # Checkout code from git
+  #     # Restore from cache
+  #     # Your job code here
 
   deploy-infrastructure:
     docker:
